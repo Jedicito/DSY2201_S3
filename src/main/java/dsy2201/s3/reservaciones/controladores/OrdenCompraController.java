@@ -1,8 +1,10 @@
 package dsy2201.s3.reservaciones.controladores;
 
+import dsy2201.s3.reservaciones.dto.OrdenCompraDTO;
 import dsy2201.s3.reservaciones.modelos.OrdenCompra;
 import dsy2201.s3.reservaciones.servicios.OrdenCompraService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,13 +27,20 @@ public class OrdenCompraController {
 
     // POST: http://localhost:8080/ordenes_compra
     @PostMapping
-    public String crearOrden(@Valid @RequestBody OrdenCompra nuevaOrden) {
-        return service.crearOrden(nuevaOrden);
+    public ResponseEntity<?> crearOrden(@Valid @RequestBody OrdenCompraDTO dto) {
+        OrdenCompra creada = service.crearOrden(dto);
+        return ResponseEntity.ok(creada);
     }
 
     // DELETE: http://localhost:8080/ordenes_compra/1
     @DeleteMapping("/{id}")
-    public String cancelarOrden(@PathVariable int id) {
-        return service.cancelarOrden(id);
+    public ResponseEntity<?> cancelarOrden(@PathVariable int id) {
+        OrdenCompra cancelada = service.cancelarOrden(id);
+
+        if (cancelada == null) {
+            return ResponseEntity.badRequest()
+                    .body("Error: Orden no encontrada o ya estaba cancelada.");  // 400
+        }
+        return ResponseEntity.ok(cancelada);
     }
 }

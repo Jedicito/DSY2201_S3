@@ -1,5 +1,6 @@
 package dsy2201.s3.reservaciones.servicios;
 
+import dsy2201.s3.reservaciones.dto.OrdenCompraDTO;
 import dsy2201.s3.reservaciones.modelos.OrdenCompra;
 import org.springframework.stereotype.Service;
 
@@ -12,42 +13,45 @@ public class OrdenCompraService {
     private List<OrdenCompra> ordenes = new ArrayList<>();
 
     public OrdenCompraService() {
-        ordenes.add(new OrdenCompra(1, "Laptop Dell",        5,  "pendiente"));
-        ordenes.add(new OrdenCompra(2, "Mouse Inalámbrico",  12, "aprobada"));
-        ordenes.add(new OrdenCompra(3, "Teclado Mecánico",   8,  "pendiente"));
-        ordenes.add(new OrdenCompra(4, "Monitor 27 pulgadas",3,  "cancelada"));
-        ordenes.add(new OrdenCompra(5, "Silla Ergonómica",   6,  "aprobada"));
-        ordenes.add(new OrdenCompra(6, "Auriculares Bluetooth", 10, "pendiente"));
-        ordenes.add(new OrdenCompra(7, "Webcam HD",          4,  "aprobada"));
-        ordenes.add(new OrdenCompra(8, "Disco SSD 1TB",      7,  "cancelada"));
+        ordenes.add(new OrdenCompra(1, "Croquetas Premium Perro",    5,  "pendiente"));
+        ordenes.add(new OrdenCompra(2, "Arena para Gato",            12, "aprobada"));
+        ordenes.add(new OrdenCompra(3, "Juguete Ratón Gato",         8,  "pendiente"));
+        ordenes.add(new OrdenCompra(4, "Cama Ortopédica Perro",      3,  "cancelada"));
+        ordenes.add(new OrdenCompra(5, "Correa Retráctil",           6,  "aprobada"));
+        ordenes.add(new OrdenCompra(6, "Shampoo Antipulgas",         10, "pendiente"));
+        ordenes.add(new OrdenCompra(7, "Comedero Automático",        4,  "aprobada"));
+        ordenes.add(new OrdenCompra(8, "Vitaminas para Mascota",     7,  "cancelada"));
     }
 
-    // Retorna todas las órdenes
+    // Retorna todas las órdenes — ya es JSON por defecto al estar en un @RestController
     public List<OrdenCompra> listarOrdenes() {
         return ordenes;
     }
 
-    public String crearOrden(OrdenCompra nuevaOrden) {
-        for (OrdenCompra orden : ordenes) {
-            if (orden.getId() == nuevaOrden.getId()) {
-                return "Error: Ya existe una orden con ese ID.";
-            }
-        }
-        nuevaOrden.setEstado("pendiente"); // Toda orden nueva nace como pendiente
+    // Recibe DTO, devuelve el modelo creado
+    public OrdenCompra crearOrden(OrdenCompraDTO dto) {
+        // Conversión DTO → Modelo
+        OrdenCompra nuevaOrden = new OrdenCompra();
+        nuevaOrden.setId(ordenes.size() + 1);        // El sistema asigna el ID
+        nuevaOrden.setProducto(dto.getProducto());
+        nuevaOrden.setCantidad(dto.getCantidad());
+        nuevaOrden.setEstado("pendiente");            // El sistema asigna el estado
+
         ordenes.add(nuevaOrden);
-        return "Orden creada con éxito.";
+        return nuevaOrden;                            // Devuelve el objeto → se serializa a JSON
     }
 
-    public String cancelarOrden(int id) {
+    // Devuelve la orden cancelada
+    public OrdenCompra cancelarOrden(int id) {
         for (OrdenCompra orden : ordenes) {
             if (orden.getId() == id) {
                 if (orden.getEstado().equals("cancelada")) {
-                    return "La orden ya se encontraba cancelada.";
+                    return null; // Lo manejamos en el controlador
                 }
                 orden.setEstado("cancelada");
-                return "Orden cancelada correctamente.";
+                return orden;  // Devuelve el objeto actualizado → se serializa a JSON
             }
         }
-        return "Error: No se encontró la orden con ID " + id;
+        return null;
     }
 }
