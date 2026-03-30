@@ -1,6 +1,5 @@
 package dsy2201.s3.reservaciones.servicios;
 
-
 import dsy2201.s3.reservaciones.modelos.OrdenCompra;
 import org.springframework.stereotype.Service;
 
@@ -9,43 +8,46 @@ import java.util.List;
 
 @Service
 public class OrdenCompraService {
+
     private List<OrdenCompra> ordenes = new ArrayList<>();
 
     public OrdenCompraService() {
-        ordenes.add(new OrdenCompra(1, "Saco Alimento Perro 15kg", 2, "Enviado"));
-        ordenes.add(new OrdenCompra(2, "Arena para Gatos", 5, "Pendiente"));
-        ordenes.add(new OrdenCompra(3, "Juguete Hueso Goma", 1, "Entregado"));
+        ordenes.add(new OrdenCompra(1, "Laptop Dell",        5,  "pendiente"));
+        ordenes.add(new OrdenCompra(2, "Mouse Inalámbrico",  12, "aprobada"));
+        ordenes.add(new OrdenCompra(3, "Teclado Mecánico",   8,  "pendiente"));
+        ordenes.add(new OrdenCompra(4, "Monitor 27 pulgadas",3,  "cancelada"));
+        ordenes.add(new OrdenCompra(5, "Silla Ergonómica",   6,  "aprobada"));
+        ordenes.add(new OrdenCompra(6, "Auriculares Bluetooth", 10, "pendiente"));
+        ordenes.add(new OrdenCompra(7, "Webcam HD",          4,  "aprobada"));
+        ordenes.add(new OrdenCompra(8, "Disco SSD 1TB",      7,  "cancelada"));
     }
 
-    public List<OrdenCompra> obtenerTodas() {
+    // Retorna todas las órdenes
+    public List<OrdenCompra> listarOrdenes() {
         return ordenes;
     }
 
-    public OrdenCompra consultarEstado(int id) {
-        for (OrdenCompra orden : ordenes) {
-            if (orden.getId() == id) {
-                return orden;
-            }
-        }
-        return null;
-    }
-
-    // Ahora recibe el objeto completo armado desde el JSON
     public String crearOrden(OrdenCompra nuevaOrden) {
-        if (nuevaOrden.getProducto() == null || nuevaOrden.getProducto().trim().isEmpty()) {
-            return "Error: El producto no puede estar vacío.";
-        }
-        if (nuevaOrden.getCantidad() <= 0) {
-            return "Error: La cantidad debe ser mayor a 0.";
-        }
         for (OrdenCompra orden : ordenes) {
             if (orden.getId() == nuevaOrden.getId()) {
-                return "Error: Ya existe una orden con el ID " + nuevaOrden.getId();
+                return "Error: Ya existe una orden con ese ID.";
             }
         }
-        
-        nuevaOrden.setEstado("Pendiente"); // Forzamos el estado inicial
+        nuevaOrden.setEstado("pendiente"); // Toda orden nueva nace como pendiente
         ordenes.add(nuevaOrden);
         return "Orden creada con éxito.";
+    }
+
+    public String cancelarOrden(int id) {
+        for (OrdenCompra orden : ordenes) {
+            if (orden.getId() == id) {
+                if (orden.getEstado().equals("cancelada")) {
+                    return "La orden ya se encontraba cancelada.";
+                }
+                orden.setEstado("cancelada");
+                return "Orden cancelada correctamente.";
+            }
+        }
+        return "Error: No se encontró la orden con ID " + id;
     }
 }
