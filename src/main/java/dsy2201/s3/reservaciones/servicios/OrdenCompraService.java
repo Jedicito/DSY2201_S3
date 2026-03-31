@@ -30,15 +30,15 @@ public class OrdenCompraService {
 
     // Recibe DTO, devuelve el modelo creado
     public OrdenCompra crearOrden(OrdenCompraDTO dto) {
-        // Conversión DTO → Modelo
+
         OrdenCompra nuevaOrden = new OrdenCompra();
-        nuevaOrden.setId(ordenes.size() + 1);        // El sistema asigna el ID
+        nuevaOrden.setId(ordenes.size() + 1); 
         nuevaOrden.setProducto(dto.getProducto());
         nuevaOrden.setCantidad(dto.getCantidad());
-        nuevaOrden.setEstado("pendiente");            // El sistema asigna el estado
+        nuevaOrden.setEstado("pendiente");
 
         ordenes.add(nuevaOrden);
-        return nuevaOrden;                            // Devuelve el objeto → se serializa a JSON
+        return nuevaOrden;
     }
 
     // Devuelve la orden cancelada

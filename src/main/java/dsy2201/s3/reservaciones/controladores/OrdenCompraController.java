@@ -1,5 +1,6 @@
 package dsy2201.s3.reservaciones.controladores;
 
+import dsy2201.s3.reservaciones.dto.ErrorResponse;
 import dsy2201.s3.reservaciones.dto.OrdenCompraDTO;
 import dsy2201.s3.reservaciones.modelos.OrdenCompra;
 import dsy2201.s3.reservaciones.servicios.OrdenCompraService;
@@ -39,7 +40,7 @@ public class OrdenCompraController {
 
         if (cancelada == null) {
             return ResponseEntity.badRequest()
-                    .body("Error: Orden no encontrada o ya estaba cancelada.");  // 400
+                    .body(new ErrorResponse("Error: Orden no encontrada o ya estaba cancelada."));  // 400
         }
         return ResponseEntity.ok(cancelada);
     }
